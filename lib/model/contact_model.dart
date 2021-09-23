@@ -1,11 +1,21 @@
 class ContactModel {
+  final int id;
   final String name;
   final int accountNumber;
 
   ContactModel(
-      this.name,
-      this.accountNumber,
-      );
+    this.id,
+    this.name,
+    this.accountNumber,
+  );
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'name': name,
+      'accountNumber': accountNumber,
+    };
+  }
 
   @override
   String toString() {
