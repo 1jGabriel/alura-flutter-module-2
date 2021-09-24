@@ -4,7 +4,7 @@ import 'package:sqflite/sqflite.dart';
 import 'app_database.dart';
 
 class ContactDao {
-  static const String tableSql = 'CREATE TABLE $_tableName(('
+  static const String tableSql = 'CREATE TABLE $_tableName('
       '$_id INTEGER PRIMARY KEY, '
       '$_name TEXT, '
       '$_accountNumber INTEGER)';
@@ -17,7 +17,7 @@ class ContactDao {
   Future<void> save(ContactModel contact) async {
     final db = await createDatabase();
     await db.insert(
-      'contacts',
+      _tableName,
       contact.toMap(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
@@ -25,7 +25,7 @@ class ContactDao {
 
   Future<List<ContactModel>> findAll() async {
     final db = await createDatabase();
-    final List<Map<String, dynamic>> maps = await db.query('contacts');
+    final List<Map<String, dynamic>> maps = await db.query(_tableName);
     return List.generate(maps.length, (i) {
       return ContactModel(
         maps[i][_id],

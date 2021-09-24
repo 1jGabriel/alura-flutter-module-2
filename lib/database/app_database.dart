@@ -10,7 +10,7 @@ Future<Database> createDatabase() async {
     onCreate: (db, version) {
       db.execute(ContactDao.tableSql);
     },
-    version: 1,
+    version: 5,
     onDowngrade: onDatabaseDowngradeDelete,
   );
 }
