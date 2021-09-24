@@ -6,9 +6,6 @@ import 'model/contact_model.dart';
 
 void main() {
   runApp(MyApp());
-
-  save(ContactModel(2, 'teste', 123)).then((value) =>
-      findAll().then((value) => debugPrint('deu bom $value')));
 }
 
 class MyApp extends StatelessWidget {

@@ -14,6 +14,7 @@ Future<Database> createDatabase() async {
           'accountNumber INTEGER)');
     },
     version: 1,
+    onDowngrade: onDatabaseDowngradeDelete,
   );
 }
 
