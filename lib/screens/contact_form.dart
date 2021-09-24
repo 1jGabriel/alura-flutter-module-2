@@ -1,5 +1,6 @@
 import 'dart:ffi';
 
+import 'package:bytebank/database/app_database.dart';
 import 'package:bytebank/model/contact_model.dart';
 import 'package:flutter/material.dart';
 
@@ -56,7 +57,7 @@ class _ContactFormState extends State<ContactForm> {
                       int.tryParse(_accountNumberController.text);
                   final ContactModel newContact =
                       ContactModel(0, name, accountNumber ?? 0);
-                  Navigator.pop(context, newContact);
+                  save(newContact).then((id) => Navigator.pop(context));
                 },
                 child: Text('Create'),
               ),
