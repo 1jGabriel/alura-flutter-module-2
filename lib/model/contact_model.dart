@@ -11,7 +11,6 @@ class ContactModel {
 
   Map<String, dynamic> toMap() {
     return {
-      'id': id,
       'name': name,
       'accountNumber': accountNumber,
     };

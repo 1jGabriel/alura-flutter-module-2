@@ -5,12 +5,8 @@ import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
 Future<Database> createDatabase() async {
-  return openDatabase(
-    join(await getDatabasesPath(), 'bytebank.db'),
-    onCreate: (db, version) {
-      db.execute(ContactDao.tableSql);
-    },
-    version: 5,
-    onDowngrade: onDatabaseDowngradeDelete,
-  );
+  return openDatabase(join(await getDatabasesPath(), 'bytebank.db'),
+      onCreate: (db, version) {
+    db.execute(ContactDao.tableSql);
+  }, version: 5, onDowngrade: onDatabaseDowngradeDelete);
 }
