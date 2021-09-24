@@ -1,3 +1,4 @@
+import 'package:bytebank/network/webclient.dart';
 import 'package:bytebank/screens/dashboard.dart';
 import 'package:flutter/material.dart';
 
@@ -6,6 +7,7 @@ import 'model/contact_model.dart';
 
 void main() {
   runApp(MyApp());
+  findAll();
 }
 
 class MyApp extends StatelessWidget {
