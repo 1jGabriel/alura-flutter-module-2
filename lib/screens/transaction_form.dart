@@ -1,6 +1,6 @@
 import 'package:bytebank/model/contact_model.dart';
 import 'package:bytebank/model/transaction_model.dart';
-import 'package:bytebank/network/webclient.dart';
+import 'package:bytebank/network/webclients/transaction_webclient.dart';
 import 'package:flutter/material.dart';
 
 class TransactionForm extends StatefulWidget {
@@ -64,7 +64,8 @@ class _TransactionFormState extends State<TransactionForm> {
                       final transactionCreated =
                           Transaction(value ?? 00, widget.contact);
 
-                      save(transactionCreated).then((transaction) {
+                      TransactionWebClient().save(transactionCreated).then(
+                              (transaction) {
                         Navigator.pop(context);
                       });
                     },
