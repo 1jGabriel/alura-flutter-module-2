@@ -1,3 +1,4 @@
+import 'package:bytebank/components/transaction_auth_dialog.dart';
 import 'package:bytebank/model/contact_model.dart';
 import 'package:bytebank/model/transaction_model.dart';
 import 'package:bytebank/network/webclients/transaction_webclient.dart';
@@ -63,11 +64,19 @@ class _TransactionFormState extends State<TransactionForm> {
                           double.tryParse(_valueController.text);
                       final transactionCreated =
                           Transaction(value ?? 00, widget.contact);
-
-                      TransactionWebClient().save(transactionCreated).then(
-                              (transaction) {
-                        Navigator.pop(context);
-                      });
+                      showDialog(
+                          context: context,
+                          builder: (context) {
+                            return TransactionAuthDialog(
+                              onConfirm: (String password) {
+                                TransactionWebClient()
+                                    .save(transactionCreated, password)
+                                    .then((transaction) {
+                                  Navigator.pop(context);
+                                });
+                              },
+                            );
+                          });
                     },
                   ),
                 ),
