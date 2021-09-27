@@ -92,6 +92,8 @@ class _TransactionFormState extends State<TransactionForm> {
         .save(transactionCreated, password)
         .then((transaction) {
       Navigator.pop(context);
+    }).catchError((e){
+      print(e);
     });
   }
 }
