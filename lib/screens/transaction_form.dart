@@ -118,7 +118,9 @@ class _TransactionFormState extends State<TransactionForm> {
   }
 
   Future _showSuccessfulMessage(
-      Transaction? transaction, BuildContext context) async {
+    Transaction? transaction,
+    BuildContext context,
+  ) async {
     if (transaction != null) {
       await showDialog(
           context: context,
@@ -129,8 +131,11 @@ class _TransactionFormState extends State<TransactionForm> {
     }
   }
 
-  Future<Transaction?> _send(Transaction transactionCreated, String password,
-      BuildContext context) async {
+  Future<Transaction?> _send(
+    Transaction transactionCreated,
+    String password,
+    BuildContext context,
+  ) async {
     final Transaction? transaction =
         await _webClient.save(transactionCreated, password).catchError((e) {
       _showFailureMessage(context, message: e.message);
