@@ -1,19 +1,22 @@
-import 'dart:ffi';
-
 import 'package:bytebank/database/contact_dao.dart';
-import 'package:bytebank/database/app_database.dart';
 import 'package:bytebank/model/contact_model.dart';
 import 'package:flutter/material.dart';
 
 class ContactForm extends StatefulWidget {
-  const ContactForm({Key? key}) : super(key: key);
+  final ContactDao contactDao;
+
+  ContactForm({required this.contactDao});
 
   @override
-  _ContactFormState createState() => _ContactFormState();
+  _ContactFormState createState() => _ContactFormState(contactDao: contactDao);
 }
 
 class _ContactFormState extends State<ContactForm> {
   final ContactDao _dao = ContactDao();
+  final ContactDao contactDao;
+
+  _ContactFormState({required this.contactDao});
+
   final TextEditingController _nameController = TextEditingController();
 
   final TextEditingController _accountNumberController =
@@ -59,8 +62,7 @@ class _ContactFormState extends State<ContactForm> {
                       int.tryParse(_accountNumberController.text);
                   final ContactModel newContact =
                       ContactModel(0, name, accountNumber ?? 0);
-                  _dao.save(newContact).then((id) => Navigator.pop
-                    (context));
+                  _save(newContact, context);
                 },
                 child: Text('Create'),
               ),
@@ -69,5 +71,9 @@ class _ContactFormState extends State<ContactForm> {
         ],
       ),
     );
+  }
+  void _save(ContactModel newContact, BuildContext context) async {
+    await contactDao.save(newContact);
+    Navigator.pop(context);
   }
 }

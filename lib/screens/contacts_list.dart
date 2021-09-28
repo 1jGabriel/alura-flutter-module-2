@@ -1,19 +1,24 @@
 import 'package:bytebank/database/contact_dao.dart';
-import 'package:bytebank/database/app_database.dart';
 import 'package:bytebank/model/contact_model.dart';
 import 'package:bytebank/screens/contact_form.dart';
 import 'package:bytebank/screens/transaction_form.dart';
 import 'package:flutter/material.dart';
 
 class ContactsList extends StatefulWidget {
-  ContactsList({Key? key}) : super(key: key);
+  final ContactDao contactDao;
+
+  ContactsList({required this.contactDao});
 
   @override
-  _ContactsListState createState() => _ContactsListState();
+  _ContactsListState createState() =>
+      _ContactsListState(contactDao: contactDao);
 }
 
 class _ContactsListState extends State<ContactsList> {
-  final ContactDao _dao = ContactDao();
+  final ContactDao contactDao;
+
+  _ContactsListState({required this.contactDao});
+
   final List<ContactModel> contacts = [];
 
   @override
@@ -25,7 +30,7 @@ class _ContactsListState extends State<ContactsList> {
       body: FutureBuilder<List<ContactModel>>(
         initialData: [],
         future: Future.delayed(Duration(seconds: 1))
-            .then((value) => _dao.findAll()),
+            .then((value) => contactDao.findAll()),
         builder: (context, snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.none:
@@ -72,7 +77,9 @@ class _ContactsListState extends State<ContactsList> {
           Navigator.of(context)
               .push(
                 MaterialPageRoute(
-                  builder: (context) => ContactForm(),
+                  builder: (context) => ContactForm(
+                    contactDao: contactDao,
+                  ),
                 ),
               )
               .then((value) => setState(() {}));
@@ -88,9 +95,9 @@ class ContactItem extends StatelessWidget {
   final Function onClick;
 
   ContactItem(
-      this.contact, {
-        required this.onClick,
-      });
+    this.contact, {
+    required this.onClick,
+  });
 
   @override
   Widget build(BuildContext context) {

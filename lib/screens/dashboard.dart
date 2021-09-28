@@ -1,12 +1,13 @@
+import 'package:bytebank/database/contact_dao.dart';
 import 'package:bytebank/screens/contacts_list.dart';
 import 'package:flutter/material.dart';
 
 import 'transaction_list.dart';
 
 class Dashboard extends StatelessWidget {
-  const Dashboard({
-    Key? key,
-  }) : super(key: key);
+  final ContactDao contactDao;
+
+  Dashboard({required this.contactDao});
 
   @override
   Widget build(BuildContext context) {
@@ -15,11 +16,9 @@ class Dashboard extends StatelessWidget {
         title: Text('Dashboard'),
       ),
       body: LayoutBuilder(
-        builder:(context, constraints)=> SingleChildScrollView(
+        builder: (context, constraints) => SingleChildScrollView(
           child: ConstrainedBox(
-            constraints: BoxConstraints(
-              minHeight: constraints.maxHeight
-            ),
+            constraints: BoxConstraints(minHeight: constraints.maxHeight),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -61,7 +60,9 @@ class Dashboard extends StatelessWidget {
   void _showContactsList(BuildContext context) {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => ContactsList(),
+        builder: (context) => ContactsList(
+          contactDao: contactDao,
+        ),
       ),
     );
   }
