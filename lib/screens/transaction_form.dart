@@ -6,6 +6,7 @@ import 'package:bytebank/components/transaction_auth_dialog.dart';
 import 'package:bytebank/model/contact_model.dart';
 import 'package:bytebank/model/transaction_model.dart';
 import 'package:bytebank/network/webclients/transaction_webclient.dart';
+import 'package:bytebank/widgets/app_dependencies.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
@@ -20,7 +21,6 @@ class TransactionForm extends StatefulWidget {
 
 class _TransactionFormState extends State<TransactionForm> {
   final TextEditingController _valueController = TextEditingController();
-  final TransactionWebClient _webClient = TransactionWebClient();
   final String transactionId = Uuid().v4();
   bool _sending = false;
 
@@ -74,7 +74,7 @@ class _TransactionFormState extends State<TransactionForm> {
                 padding: const EdgeInsets.only(top: 16.0),
                 child: SizedBox(
                   width: double.maxFinite,
-                  child: RaisedButton(
+                  child: ElevatedButton(
                     child: Text('Transfer'),
                     onPressed: () {
                       final double? value =
@@ -137,7 +137,9 @@ class _TransactionFormState extends State<TransactionForm> {
     BuildContext context,
   ) async {
     final Transaction? transaction =
-        await _webClient.save(transactionCreated, password).catchError((e) {
+        await AppDependencies.of(context).webClient.save(transactionCreated, password)
+            .catchError(
+                (e) {
       _showFailureMessage(context, message: e.message);
     }, test: (e) => e is HttpException).catchError((e) {
       _showFailureMessage(context,

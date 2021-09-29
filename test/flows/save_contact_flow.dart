@@ -1,6 +1,7 @@
 import 'package:bytebank/database/contact_dao.dart';
 import 'package:bytebank/main.dart';
 import 'package:bytebank/model/contact_model.dart';
+import 'package:bytebank/network/webclients/transaction_webclient.dart';
 import 'package:bytebank/screens/contact_form.dart';
 import 'package:bytebank/screens/contacts_list.dart';
 import 'package:bytebank/screens/dashboard.dart';
@@ -11,16 +12,18 @@ import 'package:mockito/mockito.dart';
 
 import '../matchers/matchers.dart';
 import '../mocks/mock_calls.dart';
-import '../save_contact_flow.mocks.dart';
 import 'actions.dart';
+import 'save_contact_flow.mocks.dart';
 
-@GenerateMocks([ContactDao])
+@GenerateMocks([ContactDao, TransactionWebClient])
 void main() {
   testWidgets('Should save a contact', (tester) async {
     final mockContactDao = MockContactDao();
+    final mockTransactionWebClient = MockTransactionWebClient();
     mockFindAllContacts(mockContactDao);
     await tester.pumpWidget(BytebankApp(
       contactDao: mockContactDao,
+      webClient: mockTransactionWebClient,
     ));
 
     final dashboard = find.byType(Dashboard);
