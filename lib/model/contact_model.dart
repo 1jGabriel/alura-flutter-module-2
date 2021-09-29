@@ -31,4 +31,15 @@ class ContactModel {
         'name': name,
         'accountNumber': accountNumber,
       };
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is ContactModel &&
+          runtimeType == other.runtimeType &&
+          name == other.name &&
+          accountNumber == other.accountNumber;
+
+  @override
+  int get hashCode => name.hashCode ^ accountNumber.hashCode;
 }

@@ -11,13 +11,10 @@ class ContactsList extends StatefulWidget {
 
   @override
   _ContactsListState createState() =>
-      _ContactsListState(contactDao: contactDao);
+      _ContactsListState();
 }
 
 class _ContactsListState extends State<ContactsList> {
-  final ContactDao contactDao;
-
-  _ContactsListState({required this.contactDao});
 
   final List<ContactModel> contacts = [];
 
@@ -30,7 +27,7 @@ class _ContactsListState extends State<ContactsList> {
       body: FutureBuilder<List<ContactModel>>(
         initialData: [],
         future: Future.delayed(Duration(seconds: 1))
-            .then((value) => contactDao.findAll()),
+            .then((value) => widget.contactDao.findAll()),
         builder: (context, snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.none:
@@ -78,7 +75,7 @@ class _ContactsListState extends State<ContactsList> {
               .push(
                 MaterialPageRoute(
                   builder: (context) => ContactForm(
-                    contactDao: contactDao,
+                    contactDao: widget.contactDao,
                   ),
                 ),
               )
