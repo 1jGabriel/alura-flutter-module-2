@@ -37,27 +37,19 @@ void main() {
 
     verify(mockContactDao.findAll()).called(1);
 
-    final fabNewContact = find.widgetWithIcon(FloatingActionButton, Icons.add);
-    expect(fabNewContact, findsOneWidget);
-    await tester.tap(fabNewContact);
+    await clickOnTheFabNew(tester);
     await tester.pumpAndSettle();
 
     final contactForm = find.byType(ContactForm);
     expect(contactForm, findsOneWidget);
 
-    final nameTextField = find
-        .byWidgetPredicate((widget) => textFieldMatcher(widget, 'Full name'));
-    expect(nameTextField, findsOneWidget);
-    await tester.enterText(nameTextField, 'Alex');
+    await fillTextFieldWithTextLabel(tester,
+        text: 'Alex', labelText: 'Full name');
 
-    final accountNumberTextField = find.byWidgetPredicate(
-            (widget) => textFieldMatcher(widget, 'Account number'));
-    expect(accountNumberTextField, findsOneWidget);
-    await tester.enterText(accountNumberTextField, '1000');
+    await fillTextFieldWithTextLabel(tester,
+        labelText: 'Account number', text: '1000');
 
-    final createButton = find.widgetWithText(ElevatedButton, 'Create');
-    expect(createButton, findsOneWidget);
-    await tester.tap(createButton);
+    await clickOntheElevatedButtonWithText(tester, 'Create');
     await tester.pumpAndSettle();
 
     verify(mockContactDao.save(ContactModel(0, 'Alex', 1000)));
