@@ -1,30 +1,66 @@
+import 'package:bloc/bloc.dart';
 import 'package:bytebank/components/container.dart';
+import 'package:bytebank/database/contact_dao.dart';
 import 'package:bytebank/model/contact_model.dart';
 import 'package:bytebank/screens/contact_form.dart';
 import 'package:bytebank/screens/transaction_form.dart';
 import 'package:bytebank/widgets/app_dependencies.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
+@immutable
+abstract class ContactsListState {
+  const ContactsListState();
+}
 
-class ContactsListContainer extends BlocContainer{
+@immutable
+class InitialContactsListState extends ContactsListState {
+  const InitialContactsListState();
+}
+
+@immutable
+class LoadingContactsListState extends ContactsListState {
+  const LoadingContactsListState();
+}
+
+@immutable
+class LoadedContactsListState extends ContactsListState {
+  final List<ContactModel> _contacts;
+
+  const LoadedContactsListState(this._contacts);
+}
+
+@immutable
+class FatalErrorContactsListState extends ContactsListState {
+  const FatalErrorContactsListState() : super();
+}
+
+class ContactsListCubit extends Cubit<ContactsListState> {
+  ContactsListCubit() : super(InitialContactsListState());
+
+  void reload(ContactDao dao) async {
+    emit(LoadingContactsListState());
+    dao.findAll().then((value) => emit(LoadedContactsListState(value)));
+  }
+}
+
+class ContactsListContainer extends BlocContainer {
+  final dao = ContactDao();
+
   @override
   Widget build(BuildContext context) {
-    return ContactsList();
+    return BlocProvider<ContactsListCubit>(
+      create: (BuildContext context) {
+        final cubit = ContactsListCubit();
+        cubit.reload(dao);
+        return cubit;
+      },
+      child: ContactsList(),
+    );
   }
-
 }
 
-class ContactsList extends StatefulWidget {
-
-  @override
-  _ContactsListState createState() =>
-      _ContactsListState();
-}
-
-class _ContactsListState extends State<ContactsList> {
-
-  final List<ContactModel> contacts = [];
-
+class ContactsList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final dependencies = AppDependencies.of(context);
@@ -32,67 +68,62 @@ class _ContactsListState extends State<ContactsList> {
       appBar: AppBar(
         title: Text('Tranfer'),
       ),
-      body: FutureBuilder<List<ContactModel>>(
-        initialData: [],
-        future: Future.delayed(Duration(seconds: 1))
-            .then((value) => dependencies.contactDao.findAll()),
-        builder: (context, snapshot) {
-          switch (snapshot.connectionState) {
-            case ConnectionState.none:
-              break;
-            case ConnectionState.waiting:
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    CircularProgressIndicator(),
-                    Text('Loading'),
-                  ],
-                ),
-              );
-              break;
-            case ConnectionState.active:
-              break;
-            case ConnectionState.done:
-              final List<ContactModel> contacts = snapshot.data ?? [];
-              return ListView.builder(
-                itemBuilder: (context, index) {
-                  final ContactModel contact = contacts[index];
-                  return ContactItem(
-                    contact,
-                    onClick: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => TransactionForm(contact),
-                        ),
-                      );
-                    },
-                  );
-                },
-                itemCount: contacts.length,
-              );
-              break;
+      body: BlocBuilder<ContactsListCubit, ContactsListState>(
+        builder: (context, state) {
+          if (state is LoadingContactsListState ||
+              state is InitialContactsListState) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  CircularProgressIndicator(),
+                  Text('Loading'),
+                ],
+              ),
+            );
           }
-          return Text('Unkown error');
+
+          if (state is LoadedContactsListState) {
+            return ListView.builder(
+              itemBuilder: (context, index) {
+                final ContactModel contact = state._contacts[index];
+                return ContactItem(
+                  contact,
+                  onClick: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => TransactionForm(contact),
+                      ),
+                    );
+                  },
+                );
+              },
+              itemCount: state._contacts.length,
+            );
+          }
+
+          return const Text('Unkown error');
         },
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.of(context)
-              .push(
+        onPressed: () async {
+          await Navigator.of(context).push(
             MaterialPageRoute(
-              builder: (context) =>
-                  ContactForm(
-                    contactDao: dependencies.contactDao,
-                  ),
+              builder: (context) => ContactForm(
+                contactDao: dependencies.contactDao,
+              ),
             ),
-          )
-              .then((value) => setState(() {}));
+          );
+          updateContacts(context, dependencies);
         },
         child: Icon(Icons.add),
       ),
     );
+  }
+
+  void updateContacts(BuildContext context, AppDependencies dependencies) {
+    context.read<ContactsListCubit>().reload(dependencies.contactDao);
   }
 }
 
@@ -100,7 +131,8 @@ class ContactItem extends StatelessWidget {
   final ContactModel contact;
   final Function onClick;
 
-  ContactItem(this.contact, {
+  ContactItem(
+    this.contact, {
     required this.onClick,
   });
 
