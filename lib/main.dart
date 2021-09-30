@@ -1,6 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:bytebank/network/webclients/transaction_webclient.dart';
-import 'package:bytebank/screens/name.dart';
+import 'package:bytebank/screens/dashboard.dart';
 import 'package:bytebank/theme.dart';
 import 'package:bytebank/widgets/app_dependencies.dart';
 import 'package:flutter/material.dart';
@@ -28,7 +28,7 @@ class BytebankApp extends StatelessWidget {
       webClient: webClient,
       child: MaterialApp(
         theme: bytebankTheme,
-        home: NameContainer(),
+        home: DashboardContainer(),
       ),
     );
   }

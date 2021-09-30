@@ -26,7 +26,7 @@ void main() {
       webClient: mockTransactionWebClient,
     ));
 
-    final dashboard = find.byType(Dashboard);
+    final dashboard = find.byType(DashboardView);
     expect(dashboard, findsOneWidget);
 
     await clickOnTheTransferFeatureItem(tester);

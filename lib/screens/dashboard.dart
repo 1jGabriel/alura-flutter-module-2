@@ -1,19 +1,38 @@
 import 'package:bytebank/database/contact_dao.dart';
 import 'package:bytebank/screens/contacts_list.dart';
+import 'package:bytebank/screens/name.dart';
+import 'package:bytebank/widgets/app_dependencies.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'transaction_list.dart';
 
-class Dashboard extends StatelessWidget {
+class DashboardContainer extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final dependencies = AppDependencies.of(context);
+    return BlocProvider(
+      create: (_) => NameCubit(''),
+      child: DashboardView(
+        contactDao: dependencies.contactDao,
+      ),
+    );
+  }
+}
+
+class DashboardView extends StatelessWidget {
   final ContactDao contactDao;
 
-  Dashboard({required this.contactDao});
+  DashboardView({required this.contactDao});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Dashboard'),
+        title: BlocBuilder<NameCubit, String>(
+          builder: (context, state) =>
+              Text('Olá ${context.read<NameCubit>().state}'),
+        ),
       ),
       body: LayoutBuilder(
         builder: (context, constraints) => SingleChildScrollView(
@@ -27,26 +46,35 @@ class Dashboard extends StatelessWidget {
                   padding: const EdgeInsets.all(8.0),
                   child: Image.asset('images/bytebank_logo.png'),
                 ),
-                Container(
-                  height: 120,
-                  child: ListView(
-                    scrollDirection: Axis.horizontal,
-                    children: [
-                      FeatureItem(
-                        'Transfer',
-                        Icons.monetization_on,
-                        onClick: () {
-                          _showContactsList(context);
-                        },
-                      ),
-                      FeatureItem(
-                        'Transaction Feed',
-                        Icons.description,
-                        onClick: () {
-                          _showTransactionsList(context);
-                        },
-                      ),
-                    ],
+                SingleChildScrollView(
+                  child: Container(
+                    height: 120,
+                    child: ListView(
+                      scrollDirection: Axis.horizontal,
+                      children: [
+                        FeatureItem(
+                          'Transfer',
+                          Icons.monetization_on,
+                          onClick: () {
+                            _showContactsList(context);
+                          },
+                        ),
+                        FeatureItem(
+                          'Transaction Feed',
+                          Icons.description,
+                          onClick: () {
+                            _showTransactionsList(context);
+                          },
+                        ),
+                        FeatureItem(
+                          'Change name',
+                          Icons.edit,
+                          onClick: () {
+                            _showChangeName(context);
+                          },
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ],
@@ -55,6 +83,15 @@ class Dashboard extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void _showChangeName(BuildContext blocContext) {
+    Navigator.of(blocContext).push(MaterialPageRoute(
+      builder: (context) => BlocProvider.value(
+        value: BlocProvider.of<NameCubit>(blocContext),
+        child: NameContainer(),
+      ),
+    ));
   }
 
   void _showContactsList(BuildContext context) {
