@@ -8,6 +8,11 @@ import 'package:bytebank/widgets/app_dependencies.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+// Algo parecido com sealed class do kotlin
+// Processo criação bloc
+// criar classe de cubit com o state específico e funções q precisem ser
+// utilizadas para emitir novos estados
+
 @immutable
 abstract class ContactsListState {
   const ContactsListState();
