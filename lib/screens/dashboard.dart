@@ -1,3 +1,5 @@
+import 'package:bytebank/components/container.dart';
+import 'package:bytebank/cubit/name.dart';
 import 'package:bytebank/database/contact_dao.dart';
 import 'package:bytebank/screens/contacts_list.dart';
 import 'package:bytebank/screens/name.dart';
@@ -7,7 +9,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'transaction_list.dart';
 
-class DashboardContainer extends StatelessWidget {
+class DashboardContainer extends BlocContainer {
   @override
   Widget build(BuildContext context) {
     final dependencies = AppDependencies.of(context);
@@ -94,12 +96,13 @@ class DashboardView extends StatelessWidget {
     ));
   }
 
-  void _showContactsList(BuildContext context) {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => ContactsList(),
-      ),
-    );
+  void _showContactsList(BuildContext blocContext) {
+    push(blocContext, ContactsListContainer());
+    // Navigator.of(context).push(
+    //   MaterialPageRoute(
+    //     builder: (context) => ContactsList(),
+    //   ),
+    // );
   }
 
   _showTransactionsList(BuildContext context) {

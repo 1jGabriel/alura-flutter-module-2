@@ -1,9 +1,18 @@
-import 'package:bytebank/database/contact_dao.dart';
+import 'package:bytebank/components/container.dart';
 import 'package:bytebank/model/contact_model.dart';
 import 'package:bytebank/screens/contact_form.dart';
 import 'package:bytebank/screens/transaction_form.dart';
 import 'package:bytebank/widgets/app_dependencies.dart';
 import 'package:flutter/material.dart';
+
+
+class ContactsListContainer extends BlocContainer{
+  @override
+  Widget build(BuildContext context) {
+    return ContactsList();
+  }
+
+}
 
 class ContactsList extends StatefulWidget {
 
@@ -72,12 +81,13 @@ class _ContactsListState extends State<ContactsList> {
         onPressed: () {
           Navigator.of(context)
               .push(
-                MaterialPageRoute(
-                  builder: (context) => ContactForm(
+            MaterialPageRoute(
+              builder: (context) =>
+                  ContactForm(
                     contactDao: dependencies.contactDao,
                   ),
-                ),
-              )
+            ),
+          )
               .then((value) => setState(() {}));
         },
         child: Icon(Icons.add),
@@ -90,8 +100,7 @@ class ContactItem extends StatelessWidget {
   final ContactModel contact;
   final Function onClick;
 
-  ContactItem(
-    this.contact, {
+  ContactItem(this.contact, {
     required this.onClick,
   });
 
